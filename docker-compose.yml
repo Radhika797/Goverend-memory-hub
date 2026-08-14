@@ -1,0 +1,81 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gmh_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-governed_memory_hub}
+      POSTGRES_USER: ${POSTGRES_USER:-hub_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hub_secure_password_123}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hub_user} -d ${POSTGRES_DB:-governed_memory_hub}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: gmh_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: gmh_api
+    restart: unless-stopped
+    environment:
+      APP_NAME: ${APP_NAME:-Governed Memory Hub API}
+      APP_ENV: ${APP_ENV:-development}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-governed_memory_hub}
+      POSTGRES_USER: ${POSTGRES_USER:-hub_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hub_secure_password_123}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; resp=urllib.request.urlopen('http://127.0.0.1:8000/health'); exit(0 if resp.status in (200, 503) else 1)"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  cockpit:
+    build:
+      context: ./apps/cockpit
+      dockerfile: Dockerfile
+    container_name: gmh_cockpit
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      PORT: 3000
+    ports:
+      - "${PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
