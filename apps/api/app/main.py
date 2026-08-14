@@ -5,6 +5,12 @@ import asyncio
 
 from app.config import settings
 from app.db import check_postgres_health, check_redis_health
+from app.ingestion_router import router as ingestion_router
+from app.policy_router import router as policy_router
+from app.retrieval_router import router as retrieval_router
+from app.graph_router import router as graph_router
+from app.orchestration_router import router as orchestration_router
+from app.evidence_router import router as evidence_router
 
 from contextlib import asynccontextmanager
 
@@ -19,8 +25,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="Governed Memory Hub - Phase 2 API with PostgreSQL & Audit Foundation",
-    version="2.0.0-phase2",
+    description="Governed Memory Hub API - Evidence & Demonstration Proof Engine",
+    version="9.0.0-phase9",
     lifespan=lifespan
 )
 
@@ -32,6 +38,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(ingestion_router)
+app.include_router(policy_router)
+app.include_router(retrieval_router)
+app.include_router(graph_router)
+app.include_router(orchestration_router)
+app.include_router(evidence_router)
+
 
 @app.get("/")
 async def root():

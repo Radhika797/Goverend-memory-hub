@@ -69,3 +69,13 @@ async def check_redis_health() -> Dict[str, Any]:
             "latency_ms": latency_ms,
             "error": str(e)
         }
+
+async def get_db_connection():
+    return await asyncpg.connect(
+        user=settings.POSTGRES_USER,
+        password=settings.POSTGRES_PASSWORD,
+        database=settings.POSTGRES_DB,
+        host=settings.POSTGRES_HOST,
+        port=settings.POSTGRES_PORT,
+    )
+
