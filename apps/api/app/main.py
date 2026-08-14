@@ -11,6 +11,8 @@ from app.retrieval_router import router as retrieval_router
 from app.graph_router import router as graph_router
 from app.orchestration_router import router as orchestration_router
 from app.evidence_router import router as evidence_router
+from app.cockpit_router import router as cockpit_router
+from app.erasure_router import router as erasure_router
 
 from contextlib import asynccontextmanager
 
@@ -25,8 +27,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="Governed Memory Hub API - Evidence & Demonstration Proof Engine",
-    version="9.0.0-phase9",
+    description="Governed Memory Hub API - Control Cockpit & Observability Engine",
+    version="11.0.0-phase11",
     lifespan=lifespan
 )
 
@@ -45,6 +47,8 @@ app.include_router(retrieval_router)
 app.include_router(graph_router)
 app.include_router(orchestration_router)
 app.include_router(evidence_router)
+app.include_router(cockpit_router)
+app.include_router(erasure_router)
 
 
 @app.get("/")
