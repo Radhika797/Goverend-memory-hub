@@ -7,6 +7,19 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     LOG_LEVEL: str = "INFO"
 
+    # Network Egress Governance Policy
+    EGRESS_DEFAULT_DENY: bool = True
+    EGRESS_ALLOW_LIST: List[str] = [
+        "localhost:8000",
+        "127.0.0.1:8000",
+        "api:8000",
+        "localhost:3000",
+        "127.0.0.1:3000",
+        "cockpit:3000",
+        "postgres:5432",
+        "redis:6379"
+    ]
+
     # PostgreSQL Configuration
     POSTGRES_HOST: str = "postgres"
     POSTGRES_PORT: int = 5432
@@ -33,3 +46,20 @@ class Settings(BaseSettings):
     )
 
 settings = Settings()
+
+def validate_outbound_egress_destination(destination: str) -> bool:
+    """
+    Enforce Default-Deny Outbound Network Egress Control.
+    Checks destination against explicit named allow-list.
+    Raises PermissionError if unauthorized destination is targeted.
+    """
+    if not settings.EGRESS_DEFAULT_DENY:
+        return True
+
+    dest_clean = destination.lower().replace("http://", "").replace("https://", "").split("/")[0]
+
+    for allowed in settings.EGRESS_ALLOW_LIST:
+        if dest_clean == allowed.lower() or dest_clean.startswith(allowed.lower()):
+            return True
+
+    raise PermissionError(f"Network Egress Violation: Outbound destination '{destination}' is blocked by default-deny network policy.")
