@@ -207,9 +207,13 @@ docker compose exec -T api pytest -v /app/tests
 ```
 
 ### Service Access Points
-- **Control Cockpit UI**: [http://localhost:3000](http://localhost:3000)
-- **FastAPI Documentation**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Health Check Endpoint**: [http://localhost:8000/health](http://localhost:8000/health)
+
+| Component / Interface | URL | Status | Description |
+| :--- | :--- | :---: | :--- |
+| **Interactive API Explorer UI** | [http://localhost:3000/api-explorer](http://localhost:3000/api-explorer) | **HTTP 200 OK** | Guided technical control center & live test runner |
+| **Executive Control Cockpit UI** | [http://localhost:3000](http://localhost:3000) | **HTTP 200 OK** | Executive dashboard with direct navigation link to API Explorer |
+| **Swagger OpenAPI Documentation** | [http://localhost:8000/docs](http://localhost:8000/docs) | **HTTP 200 OK** | Developer Swagger UI (fully functional and untouched) |
+| **API Dependency Health Endpoint** | [http://localhost:8000/health](http://localhost:8000/health) | **HTTP 200 OK** | PostgreSQL and Redis real-time status monitor |
 
 *Note: All data, identities, and documents in this environment are synthetic.*
 
