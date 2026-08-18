@@ -7,7 +7,7 @@ import {
   Layers, Lock, Eye, Check, X, ArrowUpRight, BarChart3, Binary,
   ChevronRight, ShieldAlert, Key, GitMerge, FileCheck, ExternalLink,
   Settings, Home, HardDrive, Search, Bell, Sun, MoreVertical,
-  ChevronDown, Shield, User, Info, ArrowRight
+  ChevronDown, Shield, User, Info, ArrowRight, Code
 } from 'lucide-react';
 
 interface MetricDrilldownEvent {
@@ -392,6 +392,14 @@ export default function CockpitHome() {
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
                 Refresh
               </button>
+
+              <a
+                href="/api-explorer"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors"
+              >
+                <Code className="w-3.5 h-3.5" />
+                <span>API Explorer</span>
+              </a>
             </div>
 
 
