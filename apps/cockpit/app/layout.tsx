@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Governed Memory Hub - Cockpit',
-  description: 'Control Cockpit & System Health Monitor',
+  title: 'Governed Memory Hub - Enterprise Cockpit',
+  description: 'Enterprise Governance Cockpit & System Health Monitor',
 };
 
 export default function RootLayout({
@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+    <html lang="en">
+      <body className="antialiased selection:bg-blue-600/20 selection:text-blue-900 bg-slate-50 text-slate-900">
         {children}
       </body>
     </html>
